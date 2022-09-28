@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sendroid"
-version = "1.0a1"
+version = "1.0a2"
 authors = [
 	{name="bwilk315", email="bwilk315@onet.pl"}
 ]

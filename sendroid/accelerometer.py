@@ -1,7 +1,7 @@
 
-from plyer  import accelerometer
-from .sensor import Sensor
-import logging
+from    plyer  import accelerometer
+from    .sensor import Sensor
+import  logging
 
 
 class Accelerometer(Sensor):

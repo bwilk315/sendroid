@@ -1,8 +1,8 @@
 
-from plyer      import gyroscope
-from math       import degrees
-from sensor     import Sensor
-import logging
+from    plyer      import gyroscope
+from    math       import degrees
+from    .sensor     import Sensor
+import  logging
 
 
 class Gyroscope(Sensor):
