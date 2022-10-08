@@ -1,0 +1,2 @@
+# Ensure build layout
+No buildozer.spec found in the current directory. Abandon.
