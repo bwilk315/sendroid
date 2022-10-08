@@ -1,41 +1,49 @@
 
+
 class Sensor:
     """
         Class used to describe the behavior most sensors follow.
     """
-    def __init__(self, **kwargs) -> None:
+
+    def __init__(self):
         """
             Initializes the 'Sensor' class instance.
         """
-        pass
+        self.active = False  # Is the sensor activated?
 
-    def __enter__(self) -> None:
-        self.on_enable()
+    def __enter__(self):
+        """
+            Method called when this context manager gets instantiated.
+        """
+        self._on_enable()
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
-        self.on_disable()
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        """
+            Method called when context manager (this) gets destructed.
+        """
+        self._on_disable()
 
-    def start(self):
+    def set_active(self, is_active: bool):
         """
-            Starts the current sensor job.
+            Either enables (if disabled) or disables (if enabled) the sensor.
+            @param is_active:   Should sensor be activated?
         """
-        self.__enter__()
+        if is_active and not self.active:
+            self._on_enable()
+        elif not is_active and self.active:
+            self._on_disable()
+        self.active = is_active
 
-    def close(self):
+    def _on_enable(self):
         """
-            Finishes the sensor job started earlier.
+            Method called when current sensor is enabled.
         """
-        self.__exit__(None, None, None)
+        raise NotImplementedError
 
-    def on_enable(self) -> None:
+    def _on_disable(self):
         """
-            Method called when sensor gets enabled (started).
+            Method called when current sensor is disabled.
         """
-        pass
+        raise NotImplementedError
 
-    def on_disable(self) -> None:
-        """
-            Method called if current sensor has been disabled (closed).
-        """
-        pass
