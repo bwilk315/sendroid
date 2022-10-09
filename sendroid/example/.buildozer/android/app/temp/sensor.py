@@ -18,7 +18,6 @@ class Sensor:
         """
         self.active             = False
         self.ignore_platform    = ignore_platform
-        self.error              = Sensor.NO_ERROR
         self.req_perms          = [f'android.permission.{perm}' for perm in req_perms]
         # If platform ignorance is true, omit the rest (platform validation).
         if self.ignore_platform:

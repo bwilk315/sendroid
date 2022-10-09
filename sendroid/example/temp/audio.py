@@ -26,6 +26,7 @@ class Audio(Sensor):
         # Pass required permissions to the superclass constructor.
         super().__init__(
             ignore_platform=kwargs.get('ignore_platform', False),
+            # buildozer.spec: RECORD_AUDIO, WAKE_LOCK.
             req_perms=[
                 'RECORD_AUDIO',
                 'WAKE_LOCK',

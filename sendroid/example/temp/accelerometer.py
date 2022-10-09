@@ -30,6 +30,7 @@ class Accelerometer(Sensor):
         self.on_disable = kwargs.get('on_disable', lambda: None)
         super().__init__(
             ignore_platform=kwargs.get('ignore_platform', False),
+            # buildozer.spec: No requirements.
             req_perms=[]
         )
 
