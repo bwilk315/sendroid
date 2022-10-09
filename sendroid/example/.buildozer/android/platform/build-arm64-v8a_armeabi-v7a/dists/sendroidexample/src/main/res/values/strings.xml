@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Sendroid Example</string>
-    <string name="private_version">5f80d60d3df3679d3d9af97fd24508f836e89f1e</string>
-    <string name="presplash_color">#000000</string>
-    <string name="urlScheme">kivy</string>
-</resources>
