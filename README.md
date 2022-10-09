@@ -1,4 +1,6 @@
 # Sendroid
+### Warning
+Project alpha version is still in build, please do not take project and its README seriously for now.
 ### Description
 Do not know the *plyer* module enough to use it? this module is the answer, I posted it on *PyPI* for developers **who need simple and intuitive access** to android sensor data (like I do).\
 Everything is commented so if you are not sure what class/method is used for, then **look up the source code**, I have tried to make things obvious in this documentation file.
