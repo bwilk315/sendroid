@@ -47,15 +47,15 @@ def extra_example():
 
 # ********** PROTOTYPING **********
 
-# import    ex_prototype
+import    ex_prototype
 
-# ex_prototype.     run_prototype()
+ex_prototype.     run_prototype()
 
 # ********** SENDROID EXAMPLES **********
 # import    ex_accelerometer
 # import    ex_audio
 # import    ex_battery
-import    ex_brightness
+# import    ex_brightness
 # import    ex_gyroscope
 # import    ex_light
 # import    ex_vibrator
@@ -63,7 +63,7 @@ import    ex_brightness
 # ex_accelerometer. run_example()
 # ex_audio.         run_example()
 # ex_battery.       run_example()
-ex_brightness.    run_example()
+# ex_brightness.    run_example()
 # ex_gyroscope.     run_example()
 # ex_light.         run_example()
 # ex_vibrator.      run_example()
