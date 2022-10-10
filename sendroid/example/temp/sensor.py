@@ -6,19 +6,28 @@ class Sensor:
     """
         Class used to describe the behavior most sensors follow.
     """
+    # Errors.
     NO_ERROR        = 0
     ACCESS_ERROR    = 1
     READ_ERROR      = 2
 
-    def __init__(self, ignore_platform: bool = False, req_perms: list = []):
+    def __init__(self, req_perms: list = [], **kwargs):
         """
             Initializes the 'Sensor' class instance.
-            @param ignore_platform: Should platform checking be omitted?
-            @param req_perms:       List of android permissions required for sensor to work properly.
+            @param ignore_platform:     Should platform checking be omitted?
+            @param req_perms:           List of android permissions required for sensor to work properly.
+            @kwarg ignore_platform:     Should platform checking be omitted?
+            @kwarg on_error[int, str]:  Error callback, called with the error information.
+            @kwarg on_enable[]:         Method called when sensor is enabled (accessible).
+            @kwarg on_disable[]:        Method called if sensor is deactivated.
         """
         self.active             = False
-        self.ignore_platform    = ignore_platform
+        # Parameters.
         self.req_perms          = [f'android.permission.{perm}' for perm in req_perms]
+        self.ignore_platform    = kwargs.get('ignore_platform', False)
+        self.on_error           = kwargs.get('on_error',        lambda code, info: None)
+        self.on_enable          = kwargs.get('on_enable',       lambda: None)
+        self.on_disable         = kwargs.get('on_disable',      lambda: None)
         # If platform ignorance is true, omit the rest (platform validation).
         if self.ignore_platform:
             return

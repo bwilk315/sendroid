@@ -18,20 +18,13 @@ class Accelerometer(Sensor):
     def __init__(self, mode: int = FULL_MODE, **kwargs):
         """
             Initializes the 'Accelerometer' class instance.
-            @param mode:                Type of functionality accelerometer will perform.
-            @kwarg ignore_platform:     Should platform checking be omitted?
-            @kwarg on_error[int, str]:  Error callback, called with the error information.
-            @kwarg on_enable[]:         Method called when sensor is enabled (accessible).
-            @kwarg on_disable[]:        Method called if sensor is deactivated.
+            @param mode:    Type of functionality accelerometer will perform.
         """
         self.mode       = mode
-        self.on_error   = kwargs.get('on_error', lambda code, info: None)
-        self.on_enable  = kwargs.get('on_enable', lambda: None)
-        self.on_disable = kwargs.get('on_disable', lambda: None)
         super().__init__(
-            ignore_platform=kwargs.get('ignore_platform', False),
             # buildozer.spec: No requirements.
-            req_perms=[]
+            req_perms   = [],
+            **kwargs
         )
 
     @property

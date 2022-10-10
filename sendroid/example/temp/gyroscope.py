@@ -1,31 +1,26 @@
 
-from    plyer       import gyroscope as gyro
+from    plyer       import gyroscope as gyro, spatialorientation as spato
 from    math        import degrees
 from    .sensor     import Sensor
 
 
 class Gyroscope(Sensor):
+    # Measurement modes.
     RAD_MODE    = 200
     DEG_MODE    = 201
+    # Class specific.
     NO_DATA     = (.0, .0, .0)
 
     def __init__(self, mode: int = RAD_MODE, **kwargs) -> None:
         """
             Initializes the 'Accelerometer' class instance.
-            @param mode:                Type of data gyroscope will be returning.
-            @kwarg ignore_platform:     Should platform checking be omitted?
-            @kwarg on_error[int, str]:  Error callback, called with the error information.
-            @kwarg on_enable[]:         Method called when sensor is enabled (accessible).
-            @kwarg on_disable[]:        Method called if sensor is deactivated.
+            @param mode:    Type of data gyroscope will be returning.
         """
         self.mode       = mode
-        self.on_error   = kwargs.get('on_error', lambda code, info: None)
-        self.on_enable  = kwargs.get('on_enable', lambda: None)
-        self.on_disable = kwargs.get('on_disable', lambda: None)
         super().__init__(
-            ignore_platform=kwargs.get('ignore_platform', False),
             # buildozer.spec: No requirements.
-            req_perms=[]
+            req_perms=[],
+            **kwargs
         )
 
     @property
@@ -37,7 +32,7 @@ class Gyroscope(Sensor):
         try:
             rot = gyro.rotation  # Read gyroscope.
             # If gyroscope is inaccessible, None-typed tuple will be returned.
-            if all(a is None for a in rot):
+            if any(a is None for a in rot):
                 return Gyroscope.NO_DATA
             # Switch gyroscope mode.
             elif self.mode == Gyroscope.RAD_MODE:
@@ -55,16 +50,34 @@ class Gyroscope(Sensor):
             self.on_error(Sensor.READ_ERROR, e)
             return self.NO_DATA
 
+    @property
+    def rotation(self) -> tuple:
+        """
+            Returns the actual rotation in space.
+        """
+        rot = spato.orientation
+        if any(a is None for a in rot):
+            return Gyroscope.NO_DATA
+        elif self.mode == Gyroscope.DEG_MODE:
+            rot = (
+                degrees(rot[0]),
+                degrees(rot[1]),
+                degrees(rot[2])
+            )
+        return rot
+
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
     def _on_disable(self):
         gyro.disable()
+        spato.disable_listener()
         self.on_disable()
 
     def _on_enable(self):
         try:
             gyro.enable()
+            spato.enable_listener()
         except Exception as e:
             #! Program could not access the sensor to enable it.
             self.on_error(Sensor.ACCESS_ERROR, e)

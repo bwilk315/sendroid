@@ -23,6 +23,8 @@ class MainLayout(BoxLayout):
         self.record_btn             = Button(text       = 'Record', on_release  = self.record)
         self.finish_btn             = Button(text       = 'Finish', on_release  = self.finish)
         self.play_btn               = Button(text       = 'Play',   on_release  = self.play)
+        self.path_input.disabled    = True
+        self.record_btn.disabled    = True
         self.finish_btn.disabled    = True
         self.play_btn.disabled      = True
         # Show up UI components.
@@ -41,7 +43,9 @@ class MainLayout(BoxLayout):
         self.audio.set_active(True)
 
     def on_audio_enable(self):
-        self.activity_label.text = 'Sensor is available :)'
+        self.activity_label.text    = 'Sensor is available :)'
+        self.path_input.disabled    = False
+        self.record_btn.disabled    = False
 
     def record(self, *largs):
         """

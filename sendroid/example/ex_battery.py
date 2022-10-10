@@ -10,7 +10,6 @@ from temp.battery           import Battery
 
 class MainLayout(BoxLayout):
     BAT_INTERVAL    = 1024      # Time between next battery data readings (here one kiloframe [kf]).
-    BAT_FORMAT      = '{}: {}'  # Format used to show axis values.
     FONT_SIZE       = '48px'    # Size of every text in app.
     TEXT_HALIGN     = 'left'    # Alignment of every text.
     frame           = 0         # Index of the current frame, used to limit readings.
@@ -24,6 +23,8 @@ class MainLayout(BoxLayout):
             halign          = MainLayout.TEXT_HALIGN
         ) for i in range(4)]
         # Show everything up.
+        self.labels[0].text = 'Battery filling percent'
+        self.labels[2].text = 'Is battery in charging state?'
         for label in self.labels:
             self.add_widget(label)
         # Instantiate battery sensor manager.
@@ -45,9 +46,9 @@ class MainLayout(BoxLayout):
         while True:
             if not MainLayout.frame % MainLayout.BAT_INTERVAL:
                 # Show the percent of battery filling.
-                self.labels[0].text = MainLayout.BAT_FORMAT.format('Battery percent',       self.bat.percent)
+                self.labels[1].text = str(self.bat.percent)
                 # Show whether battery is in charging state.
-                self.labels[1].text = MainLayout.BAT_FORMAT.format('Is battery charging?',  self.bat.charging)
+                self.labels[3].text = str(self.bat.charging)
             MainLayout.frame += 1
 
 class MainApp(App):

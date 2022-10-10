@@ -14,25 +14,18 @@ class Audio(Sensor):
         """
             Initializes the 'Audio' class instance.
             @param data_path:           Path to file which will contain the data recorded.
-            @kwarg ignore_platform:     Should platform checking be omitted?
-            @kwarg on_error[int, str]:  Error callback, called with the error information.
-            @kwarg on_enable[]:         Method called when sensor is enabled (accessible).
-            @kwarg on_disable[]:        Method called if sensor is deactivated.
         """
         self.data_path  = data_path # Path under which data will be written.
-        self.on_error   = kwargs.get('on_error', lambda code, info: None)
-        self.on_enable  = kwargs.get('on_enable', lambda: None)
-        self.on_disable = kwargs.get('on_disable', lambda: None)
         # Pass required permissions to the superclass constructor.
         super().__init__(
-            ignore_platform=kwargs.get('ignore_platform', False),
             # buildozer.spec: RECORD_AUDIO, WAKE_LOCK.
-            req_perms=[
+            req_perms   = [
                 'RECORD_AUDIO',
                 'WAKE_LOCK',
                 'READ_EXTERNAL_STORAGE',
                 'WRITE_EXTERNAL_STORAGE'
-            ]
+            ],
+            **kwargs
         )
 
     @property

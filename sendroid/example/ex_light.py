@@ -6,7 +6,7 @@ from kivy.uix.boxlayout     import BoxLayout
 from threading              import Thread
 from time                   import sleep
 
-from temp.accelerometer     import Accelerometer
+from temp.light             import Light
 
 
 class MainLayout(BoxLayout):
@@ -22,26 +22,23 @@ class MainLayout(BoxLayout):
         self.labels         = [Label(
             font_size       = MainLayout.FONT_SIZE,
             halign          = MainLayout.TEXT_HALIGN
-        ) for i in range(6)]
+        ) for i in range(2)]
         # Show everything up.
-        self.labels[0].text = 'Full acceleration'
-        self.labels[2].text = 'Gravity acceleration only'
-        self.labels[4].text = 'Linear acceleration only'
+        self.labels[0].text = 'Illumination [lx]'
         for label in self.labels:
             self.add_widget(label)
         # Instantiate accelerometer sensor manager.
-        self.acc        = Accelerometer(
-            on_error    = self._on_acc_error,
-            on_enable   = self._on_acc_enable
+        self.lig        = Light(
+            on_error    = self._on_lig_error,
+            on_enable   = self._on_lig_enable
         )
-        self.acc.set_active(True)  # Activate sensor (it may take some time).
-        self._frame = 0  # Current frame index.
+        self.lig.set_active(True)  # Activate sensor (it may take some time).
 
-    def _on_acc_error(self, code: int, info: str):
-        # print('>>accerr>>', code, '>>>(', info, ')')
+    def _on_lig_error(self, code: int, info: str):
+        # print('>>ligerr>>', code, '>>>(', info, ')')
         pass
 
-    def _on_acc_enable(self):
+    def _on_lig_enable(self):
         # Start accelerometer-data-reading loop to show its value.
         Thread(target = self.__app_loop).start()
 
@@ -52,12 +49,7 @@ class MainLayout(BoxLayout):
         """
         while True:
             sleep(MainLayout.ACC_INTERVAL)
-            self.acc.mode       = Accelerometer.FULL_MODE # Full acceleration (every acceleration included).
-            self.labels[1].text = MainLayout.AXIS_FORMAT.format(*self.acc.data)
-            self.acc.mode       = Accelerometer.GRAVITY_MODE  # Limited acceleration (only gravity).
-            self.labels[3].text = MainLayout.AXIS_FORMAT.format(*self.acc.data)
-            self.acc.mode       = Accelerometer.LINEAR_MODE  # Limited acceleration (only user-applied).
-            self.labels[5].text = MainLayout.AXIS_FORMAT.format(*self.acc.data)
+            self.labels[1].text = str(self.lig.value)
 
 
 class MainApp(App):

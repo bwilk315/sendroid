@@ -4,16 +4,17 @@ from kivy.uix.widget        import Widget
 from kivy.uix.label         import Label
 from kivy.uix.boxlayout     import BoxLayout
 from threading              import Thread
+from time                   import sleep
 
 from temp.gyroscope         import Gyroscope
 
 
 class MainLayout(BoxLayout):
-    GYRO_INTERVAL   = 128               # Time between next gyroscope data readings.
-    AXIS_FORMAT     = '{}\n{}\n{}\n{}'  # Format used to show axis values.
-    FONT_SIZE       = '48px'            # Size of every text in app.
-    TEXT_HALIGN     = 'left'            # Alignment of every text.
-    frame           = 0                 # Index of the current frame, used to limit readings.
+    GYRO_INTERVAL   = .1            # Time between next gyroscope data readings.
+    AXIS_FORMAT     = '{}\n{}\n{}'  # Format used to show axis values.
+    FONT_SIZE       = '48px'        # Size of every text in app.
+    TEXT_HALIGN     = 'left'        # Alignment of every text.
+    gyro            = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -22,8 +23,12 @@ class MainLayout(BoxLayout):
         self.labels         = [Label(
             font_size       = MainLayout.FONT_SIZE,
             halign          = MainLayout.TEXT_HALIGN
-        ) for i in range(2)]
+        ) for i in range(8)]
         # Show everything up.
+        self.labels[0].text = 'Rotation rate [rad/s]'
+        self.labels[2].text = 'Rotation [rad]'
+        self.labels[4].text = 'Rotation rate [deg/s]'
+        self.labels[6].text = 'Rotation [deg]'
         for label in self.labels:
             self.add_widget(label)
         # Instantiate gyroscope sensor manager.
@@ -43,14 +48,15 @@ class MainLayout(BoxLayout):
 
     def __app_loop(self):
         while True:
-            if not MainLayout.frame % MainLayout.GYRO_INTERVAL:
-                # Rotation in radians
-                self.gyro.mode      = Gyroscope.RAD_MODE
-                self.labels[0].text = MainLayout.AXIS_FORMAT.format('Rate of rotation [rad/s]', *self.gyro.rate)
-                # Rotation in degrees
-                self.gyro.mode      = Gyroscope.DEG_MODE  # Degrees measurement.
-                self.labels[1].text = MainLayout.AXIS_FORMAT.format('Rate of rotation [deg/s]', *self.gyro.rate)
-            MainLayout.frame += 1
+            sleep(MainLayout.GYRO_INTERVAL)
+            # Rotation rate in radians
+            self.gyro.mode      = Gyroscope.RAD_MODE
+            self.labels[1].text = MainLayout.AXIS_FORMAT.format(*self.gyro.rate)
+            self.labels[3].text = MainLayout.AXIS_FORMAT.format(*self.gyro.rotation)
+            # Rotation rate in degrees
+            self.gyro.mode      = Gyroscope.DEG_MODE  # Degrees measurement.
+            self.labels[5].text = MainLayout.AXIS_FORMAT.format(*self.gyro.rate)
+            self.labels[7].text = MainLayout.AXIS_FORMAT.format(*self.gyro.rotation)
 
 class MainApp(App):
     def __init__(self, **kwargs):
