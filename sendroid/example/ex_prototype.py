@@ -22,5 +22,4 @@ class MainApp(App):
         return Widget()
 
 
-def run_prototype():
-    MainApp().run()
+MainApp().run()

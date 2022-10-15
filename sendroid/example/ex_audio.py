@@ -87,6 +87,6 @@ class MainApp(App):
     def build(self) -> Widget:
         return MainLayout()
 
-def run_example():
-    app = MainApp()
-    app.run()
+
+app = MainApp()
+app.run()

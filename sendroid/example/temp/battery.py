@@ -10,7 +10,7 @@ class Battery(Sensor):
         """
         super().__init__(
             # buildozer.spec: BATTERY_STATS.
-            req_perms=[],
+            req_perms = [],
             **kwargs
         )
 
@@ -32,7 +32,6 @@ class Battery(Sensor):
         return .0 if perc is None else perc
 
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
-        print('>><<>><<>>', permissions, " > ", grants)
         return all(grants)
 
     def _on_disable(self):
