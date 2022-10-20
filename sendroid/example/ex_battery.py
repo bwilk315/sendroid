@@ -1,61 +1,64 @@
 
 from kivy.app               import App
-from kivy.uix.widget        import Widget
-from kivy.uix.label         import Label
+from kivy.lang              import Builder
 from kivy.uix.boxlayout     import BoxLayout
 from threading              import Thread
-
 from temp.battery           import Battery
+from time                   import sleep
+
+Builder.load_string(
+"""
+<MainLayout>:
+    orientation: 'vertical'
+    Label:
+        text: 'Filling percent'
+    Label:
+        id: percent
+        text: '0'
+    Label:
+        text: 'Is battery charging?'
+    Label:
+        id: state
+        text: 'No'
+""")
 
 
 class MainLayout(BoxLayout):
-    BAT_INTERVAL    = 1024      # Time between next battery data readings (here one kiloframe [kf]).
-    FONT_SIZE       = '48px'    # Size of every text in app.
-    TEXT_HALIGN     = 'left'    # Alignment of every text.
-    frame           = 0         # Index of the current frame, used to limit readings.
+    BAT_INTERVAL    = .1  # Time between next battery data-readings in seconds [s].
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.orientation    = 'vertical'
-        # Create four labels for showing data.
-        self.labels         = [Label(
-            font_size       = MainLayout.FONT_SIZE,
-            halign          = MainLayout.TEXT_HALIGN
-        ) for i in range(4)]
-        # Show everything up.
-        self.labels[0].text = 'Battery filling percent'
-        self.labels[2].text = 'Is battery in charging state?'
-        for label in self.labels:
-            self.add_widget(label)
         # Instantiate battery sensor manager.
         self.bat            = Battery(
             on_error        = self._on_bat_error,
-            on_enable       = self._on_bat_enable
+            on_enable       = self._on_bat_enable,
+            on_disable      = self._on_bat_disable
         )
-        self.bat.set_active(True)  # Activate sensor (it may take some time).
+        self.bat.set_active(True)
 
     def _on_bat_error(self, code: int, info: str):
-        # print('>>baterr>>', code, '>>>(', info, ')')
+        # print('>>battery>> ', code, ' >> ', info)
         pass
 
     def _on_bat_enable(self):
         # Start the battery-reading loop in another thread.
         Thread(target = self.__app_loop).start()
 
+    def _on_bat_disable(self):
+        pass
+
     def __app_loop(self):
         while True:
-            if not MainLayout.frame % MainLayout.BAT_INTERVAL:
-                # Show the percent of battery filling.
-                self.labels[1].text = str(self.bat.percent)
-                # Show whether battery is in charging state.
-                self.labels[3].text = str(self.bat.charging)
-            MainLayout.frame += 1
+            sleep(MainLayout.BAT_INTERVAL)
+            self.ids['percent'] .text   = str(self.bat.percent)
+            self.ids['state']   .text   = 'Yes' if self.bat.charging else 'No'
+
 
 class MainApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def build(self) -> Widget:
+    def build(self):
         return MainLayout()
 
 

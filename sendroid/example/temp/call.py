@@ -1,6 +1,6 @@
 
-from plyer      import call
 from .sensor    import Sensor
+from plyer      import call
 
 
 class Call(Sensor):
@@ -37,8 +37,9 @@ class Call(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return all(grants)
 
+    def _on_enable(self):
+        self.on_enable()
+
     def _on_disable(self):
         self.on_disable()
 
-    def _on_enable(self):
-        self.on_enable()

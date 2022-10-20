@@ -1,61 +1,67 @@
 
 from kivy.app               import App
-from kivy.uix.widget        import Widget
-from kivy.uix.label         import Label
-from kivy.uix.button        import Button
+from kivy.lang              import Builder
 from kivy.uix.boxlayout     import BoxLayout
-
 from temp.flash             import Flash
+
+Builder.load_string(
+"""
+<MainLayout>:
+    orientation: 'vertical'
+    Label:
+        id: status
+        text: 'OFF or ON'
+    BoxLayout:
+        orientation: 'horizontal'
+        Button:
+            id: on
+            disabled: True
+            text: 'Turn on'
+            on_release: root.turn_on()
+        Button:
+            id: off
+            disabled: True
+            text: 'Turn off'
+            on_release: root.turn_off()
+""")
 
 
 class MainLayout(BoxLayout):
-    FONT_SIZE       = '48px'        # Font size of all texts in the app.
-    TEXT_HALIGN     = 'left'        # Text align.
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.orientation            = 'vertical'
-        # Create UI elements
-        self.state_label            = Label(text            = 'OFF',                font_size   = MainLayout.FONT_SIZE, halign  = MainLayout.TEXT_HALIGN)
-        self.on_btn                 = Button(text           = 'Turn on',            on_release  = self.turn_on)
-        self.off_btn                = Button(text           = 'Turn off',           on_release  = self.turn_off)
-        self.buttons_panel          = BoxLayout(orientation = 'horizontal')
-        self.on_btn.disabled        = True
-        self.off_btn.disabled       = True
-        # Show everything up.
-        self.add_widget(self.state_label)
-        self.buttons_panel.add_widget(self.on_btn)
-        self.buttons_panel.add_widget(self.off_btn)
-        self.add_widget(self.buttons_panel)
-        # Instantiate accelerometer sensor manager.
+        # Instantiate flash sensor manager.
         self.flash      = Flash(
             on_error    = self._on_flash_error,
-            on_enable   = self._on_flash_enable
+            on_enable   = self._on_flash_enable,
+            on_disable  = self._on_flash_disable
         )
-        self.flash.set_active(True)  # Activate sensor (it may take some time).
-
-    def turn_on(self, *largs):
-        self.flash.state        = Flash.STATE_ON
-        self.state_label.text   = 'ON'
-
-    def turn_off(self, *largs):
-        self.flash.state        = Flash.STATE_OFF
-        self.state_label.text   = 'OFF'
+        self.flash.set_active(True)
 
     def _on_flash_error(self, code: int, info: str):
-        # print('>>flasherr>>', code, '>>>(', info, ')')
+        # print('>>flash>> ', code, ' >> ', info)
         pass
 
     def _on_flash_enable(self):
-        self.on_btn.disabled        = False
-        self.off_btn.disabled       = False
+        self.ids['on']  .disabled   = False
+        self.ids['off'] .disabled   = False
+
+    def _on_flash_disable(self):
+        pass
+
+    def turn_on(self, *largs):
+        self.flash.state        = Flash.STATE_ON
+        self.ids['status'].text = 'ON'
+
+    def turn_off(self, *largs):
+        self.flash.state        = Flash.STATE_OFF
+        self.ids['status'].text = 'OFF'
 
 
 class MainApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def build(self) -> Widget:
+    def build(self):
         return MainLayout()
 
 

@@ -1,6 +1,6 @@
 
-from plyer      import proximity
 from .sensor    import Sensor
+from plyer      import proximity
 
 
 class Proximity(Sensor):
@@ -22,10 +22,6 @@ class Proximity(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
-    def _on_disable(self):
-        proximity.disable()
-        self.on_disable()
-
     def _on_enable(self):
         try:
             proximity.enable()
@@ -33,3 +29,8 @@ class Proximity(Sensor):
             self.on_error(Sensor.ACCESS_ERROR, 'Can not enale the proximity sensor device.')
         else:
             self.on_enable()
+
+    def _on_disable(self):
+        proximity.disable()
+        self.on_disable()
+

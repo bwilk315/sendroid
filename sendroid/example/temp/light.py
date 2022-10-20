@@ -1,10 +1,9 @@
 
-from plyer      import light
 from .sensor    import Sensor
+from plyer      import light
 
 
 class Light(Sensor):
-    # Class specific.
     NO_DATA = .0
 
     def __init__(self, **kwargs):
@@ -25,11 +24,11 @@ class Light(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
-    def _on_disable(self):
-        light.disable()
-        self.on_disable()
-
     def _on_enable(self):
         light.enable()
         self.on_enable()
+
+    def _on_disable(self):
+        light.disable()
+        self.on_disable()
 

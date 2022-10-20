@@ -1,7 +1,6 @@
 
-from plyer      import brightness       as brig
-from jnius      import autoclass, cast
 from .sensor    import Sensor
+from plyer      import brightness   as brig
 
 
 class Brightness(Sensor):
@@ -13,7 +12,7 @@ class Brightness(Sensor):
         )
 
     @property
-    def level(self):
+    def level(self) -> int:
         return brig.current_level()
 
     @level.setter
@@ -29,9 +28,9 @@ class Brightness(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
-    def _on_disable(self):
-        self.on_disable()
-
     def _on_enable(self):
         self.on_enable()
+
+    def _on_disable(self):
+        self.on_disable()
 

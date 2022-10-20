@@ -1,9 +1,10 @@
 
-from .sensor import Sensor
-from plyer import barometer as bar
+from plyer      import temperature as tem
+from .sensor    import Sensor
 
 
-class Barometer(Sensor):
+class Temperature(Sensor):
+    # Class-specific
     NO_DATA = 0
 
     def __init__(self, **kwargs):
@@ -16,19 +17,18 @@ class Barometer(Sensor):
     @property
     def value(self) -> float:
         """
-            Returns the ambient air pressure in hecto pascals [hPa].
+            Returns the ambient temperature in Celsius degrees (*C).
         """
-        pres = bar.pressure
-        return Barometer.NO_DATA if pres is None else pres
+        temp = tem.temperature
+        return Temperature.NO_DATA if temp is None else temp
 
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
-    def _on_enable(self):
-        bar.enable()
-        self.on_enable()
-
     def _on_disable(self):
-        bar.disable()
+        tem.disable()
         self.on_disable()
 
+    def _on_enable(self):
+        tem.enable()
+        self.on_enable()

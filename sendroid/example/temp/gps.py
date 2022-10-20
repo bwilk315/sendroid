@@ -1,18 +1,17 @@
 
-from plyer      import gps
 from .sensor    import Sensor
-from time       import sleep
+from plyer      import gps
 
 
-class GPS(Sensor):
+class Gps(Sensor):
     GPS_ENABLE  = 'provider-enabled'
     GPS_DISABLE = 'provider-disabled'
 
     def __init__(
             self,
-            update_time: int    = 100,
-            update_dist: float  = .01,
-            on_update           = lambda: None,
+            update_time: int    = 1000,
+            update_dist: float  = 1,
+            on_update           = lambda status: None,
             **kwargs
         ):
         """
@@ -40,18 +39,25 @@ class GPS(Sensor):
         )
 
     def _on_location(self, **kwargs):
+        """
+            Callback invoked when location update occurs.
+        """
         self.latitude   = kwargs.get('lat',        .0)
         self.longitude  = kwargs.get('lon',        .0)
         self.speed      = kwargs.get('speed',      .0)
         self.direction  = kwargs.get('bearing',    .0)
         self.altitude   = kwargs.get('altitude',   .0)
-        self.on_update()
+        self.on_update(status = True)
 
     def _on_status(self, msg_type, status):
-        if msg_type == GPS.GPS_ENABLE:
+        """
+            Callback invoked when state of GPS service changed (e.g. user turned it off).
+        """
+        if msg_type == Gps.GPS_ENABLE:
             self.available = True
-        elif msg_type == GPS.GPS_DISABLE:
+        elif msg_type == Gps.GPS_DISABLE:
             self.available = False
+        self.on_update(status = self.available)
 
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         granted = all(grants)
@@ -64,10 +70,6 @@ class GPS(Sensor):
             )
         return granted
 
-    def _on_disable(self):
-        gps.stop()
-        self.on_disable()
-
     def _on_enable(self):
         # Start the service with specified update characteristics.
         gps.start(
@@ -75,3 +77,8 @@ class GPS(Sensor):
             minDistance = self.update_dist
         )
         self.on_enable()
+
+    def _on_disable(self):
+        gps.stop()
+        self.on_disable()
+

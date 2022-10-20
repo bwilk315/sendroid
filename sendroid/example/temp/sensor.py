@@ -2,11 +2,11 @@
 from kivy.utils     import platform
 from importlib      import import_module
 
+
 class Sensor:
     """
         Class used to describe the behavior most sensors follow.
     """
-    # Errors.
     NO_ERROR        = 0
     ACCESS_ERROR    = 1
     READ_ERROR      = 2

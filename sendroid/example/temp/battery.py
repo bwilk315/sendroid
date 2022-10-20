@@ -1,13 +1,10 @@
 
-from    plyer       import battery  as bat
 from    .sensor     import Sensor
+from    plyer       import battery  as bat
 
 
 class Battery(Sensor):
     def __init__(self, **kwargs) -> None:
-        """
-            Initializes the 'Accelerometer' class instance.
-        """
         super().__init__(
             # buildozer.spec: BATTERY_STATS.
             req_perms = [],
@@ -34,9 +31,9 @@ class Battery(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return all(grants)
 
-    def _on_disable(self):
-        self.on_disable()
-
     def _on_enable(self):
         self.on_enable()
+
+    def _on_disable(self):
+        self.on_disable()
 

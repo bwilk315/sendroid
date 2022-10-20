@@ -1,7 +1,7 @@
 
+from    .sensor         import Sensor
 from    plyer           import accelerometer    as acc
 from    plyer           import gravity          as grav
-from    .sensor         import Sensor
 
 
 class Accelerometer(Sensor):
@@ -12,7 +12,6 @@ class Accelerometer(Sensor):
     GRAVITY_MODE    = 201
     LINEAR_MODE     = 202
     # Class specific.
-    GRAVITY         = 9.81
     NO_DATA         = (.0, .0, .0)
 
     def __init__(self, mode: int = FULL_MODE, **kwargs):
@@ -42,14 +41,15 @@ class Accelerometer(Sensor):
                 # TODO: Implement linear acceleration
                 acc_val = Accelerometer.NO_DATA
             else:
-                self.on_error(Accelerometer.MODE_ERROR)
+                #! Program does not know the mode specified.
+                self.on_error(Accelerometer.MODE_ERROR, f'Unknown accelerometer mode {self.mode}.')
                 return Accelerometer.NO_DATA
             # If any axis value is None then its value is inaccessible, return empty tuple
             if any(a is None for a in acc_val):
                 return Accelerometer.NO_DATA
         except:
             #! Program was unable to read sensor data due to exception.
-            self.on_error(Accelerometer.READ_ERROR)
+            self.on_error(Accelerometer.READ_ERROR, 'Error occurred when tried to read the data.')
             return Accelerometer.NO_DATA
         else:
             return acc_val
@@ -57,18 +57,22 @@ class Accelerometer(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
+    def _on_enable(self):
+        x = 1
+        try:
+            acc.enable()
+            x = 0
+            grav.enable()
+        except:
+            obj = 'accelerometer sensor.' if x else 'both accelerometer and gravity.'
+            #! Program could not access the sensors in order to enable it.
+            self.error(Accelerometer.ACCESS_ERROR, f'Can not access {obj}.')
+        else:
+            self.on_enable()
+
     def _on_disable(self):
+        # Disable sensors.
         acc.disable()
         grav.disable()
         self.on_disable()
-
-    def _on_enable(self):
-        try:
-            acc.enable()
-            grav.enable()
-        except:
-            #! Program could not access the sensor to enable it.
-            self.error = Accelerometer.ACCESS_ERROR
-        else:
-            self.on_enable()
 

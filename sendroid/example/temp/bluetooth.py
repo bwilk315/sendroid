@@ -1,6 +1,6 @@
 
-from    plyer   import bluetooth as bt
 from    .sensor import Sensor
+from    plyer   import bluetooth as bt
 
 
 class Bluetooth(Sensor):
@@ -16,7 +16,7 @@ class Bluetooth(Sensor):
         )
 
     @property
-    def state(self) -> str:
+    def state(self) -> int:
         """
             Returns the current state of bluetooth sensor (on or off).
         """
@@ -26,9 +26,9 @@ class Bluetooth(Sensor):
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
-    def _on_disable(self):
-        self.on_disable()
-
     def _on_enable(self):
         self.on_enable()
+
+    def _on_disable(self):
+        self.on_disable()
 

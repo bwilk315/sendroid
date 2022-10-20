@@ -1,14 +1,15 @@
 
-from    plyer       import gyroscope as gyro, spatialorientation as spato
-from    math        import degrees
 from    .sensor     import Sensor
+from    math        import degrees
+from    plyer       import gyroscope            as gyro
+from    plyer       import spatialorientation   as spato
 
 
 class Gyroscope(Sensor):
     # Measurement modes.
     RAD_MODE    = 200
     DEG_MODE    = 201
-    # Class specific.
+    # Class-specific.
     NO_DATA     = (.0, .0, .0)
 
     def __init__(self, mode: int = RAD_MODE, **kwargs) -> None:

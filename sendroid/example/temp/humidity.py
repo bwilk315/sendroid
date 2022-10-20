@@ -1,10 +1,10 @@
 
-from .sensor import Sensor
-from plyer import barometer as bar
+from .sensor    import Sensor
+from plyer      import humidity as hum
 
 
-class Barometer(Sensor):
-    NO_DATA = 0
+class Humidity(Sensor):
+    NO_DATA = .0
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -16,19 +16,21 @@ class Barometer(Sensor):
     @property
     def value(self) -> float:
         """
-            Returns the ambient air pressure in hecto pascals [hPa].
+            Returns humidity in percents [%] if it is available, otherwise returns 0.
         """
-        pres = bar.pressure
-        return Barometer.NO_DATA if pres is None else pres
+        try:
+            return hum.tell
+        except:
+            return Humidity.NO_DATA
 
     def _on_perms_grant(self, permissions: list, grants: list) -> bool:
         return True
 
     def _on_enable(self):
-        bar.enable()
+        hum.enable()
         self.on_enable()
 
     def _on_disable(self):
-        bar.disable()
+        hum.disable()
         self.on_disable()
 

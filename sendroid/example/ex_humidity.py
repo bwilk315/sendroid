@@ -3,7 +3,7 @@ from kivy.app               import App
 from kivy.lang              import Builder
 from kivy.uix.boxlayout     import BoxLayout
 from threading              import Thread
-from temp.proximity         import Proximity
+from temp.humidity          import Humidity
 from time                   import sleep
 
 Builder.load_string(
@@ -11,35 +11,36 @@ Builder.load_string(
 <MainLayout>:
     orientation: 'vertical'
     Label:
-        id: status
+        id: humidity
     Label:
-        text: 'Proximity status'
+        text: 'Humidity [%]'
 """)
 
 
 class MainLayout(BoxLayout):
-    PROX_INTERVAL   = .1  # Interval between next proximity sensor data-readings in seconds [s].
+    HUM_INTERVAL    = .1  # Interval between next humidity sensor readings in seconds [s].
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Create proximity sensor manager instance.
-        self.prox       = Proximity(
-            on_enable   = self._on_prox_enable,
-            on_disable  = self._on_prox_disable
+        # Create humidity sensor manager instance.
+        self.hum            = Humidity(
+            on_enable       = self._on_hum_enable,
+            on_disable      = self._on_hum_disable
         )
-        self.prox.set_active(True)
+        self.hum.set_active(True)
 
-    def _on_prox_enable(self):
+    def _on_hum_enable(self):
         # Start reading-loop.
         Thread(target = self.__app_loop).start()
 
-    def _on_prox_disable(self):
+    def _on_hum_disable(self):
         pass
 
     def __app_loop(self):
         while True:
-            sleep(MainLayout.PROX_INTERVAL)
-            self.ids['status'].text = 'Covered' if self.prox.covered else 'Clear'
+            sleep(MainLayout.HUM_INTERVAL)
+            self.ids['humidity'].text = str(self.hum.value)
+
 
 class MainApp(App):
     def __init__(self, **kwargs):

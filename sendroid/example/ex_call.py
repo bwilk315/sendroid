@@ -1,12 +1,36 @@
 
 from kivy.app               import App
-from kivy.uix.widget        import Widget
-from kivy.uix.label         import Label
-from kivy.uix.button        import Button
-from kivy.uix.textinput     import TextInput
+from kivy.lang              import Builder
 from kivy.uix.boxlayout     import BoxLayout
-
 from temp.call              import Call
+
+Builder.load_string(
+"""
+<MainLayout>:
+    orientation: 'vertical'
+    Label:
+        text: 'Phone number'
+    TextInput:
+        id: phone
+        disabled: True
+        input_type: 'tel'
+        text: '000000000000'
+    Label:
+        id: status
+        text: 'Sensor is inaccessible'
+    BoxLayout:
+        orientation: 'horizontal'
+        Button:
+            id: dial
+            disabled: True
+            text: 'Dial'
+            on_release: root.open_dial()
+        Button:
+            id: call
+            disabled: True
+            text: 'Call'
+            on_release: root.make_call()
+""")
 
 
 class MainLayout(BoxLayout):
@@ -14,36 +38,26 @@ class MainLayout(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Prepare parent
-        self.orientation            = 'vertical'
-        # Prepare UI interface elements.
-        self.phone_input            = TextInput(text        = str(MainLayout.DEF_PHONE_NUM), multiline = False)
-        self.phone_input.input_type = 'tel'
-        self.activity_label         = Label(text            = 'Sensor is inaccessible due to permissions :(')
-        self.buttons_panel          = BoxLayout(orientation = 'horizontal')
-        self.dial_btn               = Button(text           = 'Dial', on_release  = self.open_dial)
-        self.call_btn               = Button(text           = 'Call', on_release  = self.make_call)
-        self.phone_input.disabled   = True
-        self.dial_btn.disabled      = True
-        self.call_btn.disabled      = True
-        # Show up UI components.
-        self.add_widget(Label(text  = 'Phone number with prefix'))
-        self.add_widget(self.phone_input)
-        self.add_widget(self.activity_label)
-        self.buttons_panel.add_widget(self.dial_btn)
-        self.buttons_panel.add_widget(self.call_btn)
-        self.add_widget(self.buttons_panel)
-        # Create audio manager instance.
+        # Create calling manager instance.
         self.call       = Call(
-            on_enable   = self.on_call_enable
+            on_error    = self._on_call_error,
+            on_enable   = self._on_call_enable,
+            on_disable  = self._on_call_disable
         )
         self.call.set_active(True)
 
-    def on_call_enable(self):
-        self.activity_label.text    = 'Sensor is available :)'
-        self.phone_input.disabled   = False
-        self.dial_btn.disabled      = False
-        self.call_btn.disabled      = False
+    def _on_call_error(self, code: int, info: str):
+        # print('>>call>> ', code, ' >> ', info)
+        pass
+
+    def _on_call_enable(self):
+        self.ids['status']  .text       = 'Sensor is accessible'
+        self.ids['phone']   .disabled   = False
+        self.ids['dial']    .disabled   = False
+        self.ids['call']    .disabled   = False
+
+    def _on_call_disable(self):
+        pass
 
     def open_dial(self, *largs):
         """
@@ -53,15 +67,19 @@ class MainLayout(BoxLayout):
 
     def make_call(self, *largs):
         """
-            Makes a call with specified phone number.
+            Makes a call with specified phone number if it is valid.
         """
-        self.call.make(int(self.phone_input.text))
+        phone_str = self.ids['phone'].text  # Get inputted phone number.
+        # Check the number and perform proper action.
+        num = int(phone_str) if len(phone_str) else MainLayout.DEF_PHONE_NUM
+        self.call.make(num)
+
 
 class MainApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def build(self) -> Widget:
+    def build(self):
         return MainLayout()
 
 

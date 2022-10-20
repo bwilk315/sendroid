@@ -1,6 +1,6 @@
 
-from jnius      import autoclass, cast
 from .sensor    import Sensor
+from jnius      import autoclass, cast
 
 # Everything done below is required to change brightness level since this level is a system settings and is restricted.
 # Get python activity class from kivy application.
@@ -13,7 +13,6 @@ context         = cast('android.content.Context', currentActivity.getApplication
 
 
 class Flash(Sensor):
-    # States.
     STATE_OFF   = 0
     STATE_ON    = 1
 
@@ -29,14 +28,14 @@ class Flash(Sensor):
         )
     
     @property
-    def state(self):
+    def state(self) -> int:
         """
             Returns the current state of flash (turned on/off).
         """
         return self.__state
 
     @state.setter
-    def state(self, value):
+    def state(self, value: int):
         """
             Sets the state efficiently.
         """
@@ -54,9 +53,9 @@ class Flash(Sensor):
             self.__camera = Camera(context)
         return granted
 
-    def _on_disable(self):
-        self.on_disable()
-
     def _on_enable(self):
         self.on_enable()
+
+    def _on_disable(self):
+        self.on_disable()
 
