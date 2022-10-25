@@ -1,7 +1,4 @@
 
-from kivy.utils     import platform
-from importlib      import import_module
-
 
 class Sensor:
     """
@@ -86,7 +83,7 @@ class Sensor:
 
     def _on_disable(self):
         """
-            Method called when current sensor is disabled.
+            Method   called when current sensor is disabled.
         """
         raise NotImplementedError()
 

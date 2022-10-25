@@ -7,6 +7,9 @@
     Bartłomiej Wilk (c) 2022
 """
 
+# ********** TESTS **********
+import ex_prototype
+
 # ********** SENDROID EXAMPLES **********
 # import    ex_accelerometer
 # import    ex_barometer
