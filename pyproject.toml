@@ -1,22 +1,22 @@
 [build-system]
-requires = ["hatchling", "plyer"]
+requires = ["hatchling", "kivy", "jnius"]
 build-backend = "hatchling.build"
 
 [project]
 name = "sendroid"
-version = "1.0a7"
+version = "1.0b1"
 authors = [
 	{name="bwilk315", email="bwilk315@onet.pl"}
 ]
-description = "Simple android sensors manager"
+description = "Android sensors manager for Kivy"
 readme = "README.md"
-license = {file="LICENSE"}
 requires-python = ">=3.5"
 classifiers = [
 	"Programming Language :: Python :: 3",
-	"License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+	"License :: OSI Approved :: Apache Software License",
 	"Operating System :: OS Independent"
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/bwilk315/sendroid"
+"License" = "https://www.apache.org/licenses/LICENSE-2.0.txt"
